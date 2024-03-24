@@ -1,5 +1,6 @@
 <script>
   import { onMount } from "svelte";
+  import Drawer from "./Drawer.svelte";
 
   export let color = "#333";
   export let background = "transparent";
@@ -22,6 +23,10 @@
     context.strokeStyle = color;
   }
 
+  const resetCanvas = () => {
+    context.clearRect(0, 0, canvas.width, canvas.height);
+  };
+
   const handleStart = ({ offsetX: x, offsetY: y }) => {
     if (color === background) {
       context.clearRect(0, 0, canvas.width, canvas.height);
@@ -34,6 +39,7 @@
   const handleEnd = () => {
     isDrawing = false;
   };
+
   const handleMove = ({ offsetX: x1, offsetY: y1 }) => {
     if (!isDrawing) return;
 
@@ -59,6 +65,7 @@
 
 <svelte:window on:resize={handleSize} />
 
+<Drawer {resetCanvas} />
 <canvas
   style:background
   bind:this={canvas}
