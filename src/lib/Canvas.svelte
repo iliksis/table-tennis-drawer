@@ -1,25 +1,25 @@
-<script>
+<script lang="ts">
   import { onMount } from "svelte";
   import Drawer from "./Drawer.svelte";
 
-  export let color = "#333";
+  export let color = "#222";
   export let background = "transparent";
 
   let canvas;
-  let context;
+  let context: CanvasRenderingContext2D;
   let isDrawing;
   let start;
 
   let t, l;
 
   onMount(() => {
+    handleSize();
     context = canvas.getContext("2d");
     context.lineWidth = 3;
-
-    handleSize();
   });
 
   $: if (context) {
+    console.log("test");
     context.strokeStyle = color;
   }
 
@@ -28,12 +28,8 @@
   };
 
   const handleStart = ({ offsetX: x, offsetY: y }) => {
-    if (color === background) {
-      context.clearRect(0, 0, canvas.width, canvas.height);
-    } else {
-      isDrawing = true;
-      start = { x, y };
-    }
+    isDrawing = true;
+    start = { x, y };
   };
 
   const handleEnd = () => {
@@ -47,8 +43,8 @@
     context.beginPath();
     context.moveTo(x, y);
     context.lineTo(x1, y1);
-    context.closePath();
     context.stroke();
+    context.closePath();
 
     start = { x: x1, y: y1 };
   };
@@ -64,8 +60,10 @@
 </script>
 
 <svelte:window on:resize={handleSize} />
-
-<Drawer {resetCanvas} />
+<Drawer
+  {resetCanvas}
+  on:color={({ detail: { color: _color } }) => (color = _color)}
+/>
 <canvas
   style:background
   bind:this={canvas}

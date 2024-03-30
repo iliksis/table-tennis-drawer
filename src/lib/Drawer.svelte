@@ -1,9 +1,14 @@
 <script lang="ts">
+  import { createEventDispatcher } from "svelte";
+  const dispatch = createEventDispatcher();
+
   import expand from "../assets/fullscreen-expand-svgrepo-com.svg";
   import shrink from "../assets/fullscreen-shrink-svgrepo-com.svg";
   import reset from "../assets/reset-svgrepo-com.svg";
 
   export let resetCanvas = undefined;
+
+  let hidden = false;
 
   let fullscreen = false;
 
@@ -15,6 +20,14 @@
       fullscreen = false;
       document.exitFullscreen();
     }
+  };
+
+  const colors = ["#222", "#c00", "#00c", "#cc0"];
+  let selectedColorIndex = 0;
+
+  const _onChangeColor = (color: string, index: number) => {
+    dispatch("color", { color });
+    selectedColorIndex = index;
   };
 </script>
 
@@ -30,39 +43,69 @@
   <button on:click={resetCanvas}>
     <img src={reset} alt="Reset canvas" />
   </button>
+
+  <div class={"divider"} />
+
+  {#each colors as color, index}
+    <button
+      class:selected={selectedColorIndex === index}
+      disabled={selectedColorIndex === index}
+      on:click={() => _onChangeColor(color, index)}
+    >
+      <div class:color style="background-color: {color}" />
+    </button>
+  {/each}
 </aside>
 
 <style>
+  /* Drawer Menu */
   aside {
+    display: flex;
     position: absolute;
     left: 5px;
     top: 25%;
     width: 50px;
-    height: 100px;
+    height: auto;
     z-index: 10;
     background-color: rgba(255, 255, 255, 0.5);
     backdrop-filter: blur(10px);
     border-radius: 5px;
-    display: flex;
     align-items: center;
     flex-direction: column;
     flex-wrap: nowrap;
   }
 
-  button {
+  aside > button {
     width: 100%;
     aspect-ratio: 1;
     border: none;
     background-color: transparent;
     cursor: pointer;
+    padding: 6px;
   }
 
-  button:hover {
+  aside > button:hover {
     background-color: rgba(0, 0, 0, 0.1);
   }
 
-  button > img {
+  aside > button.selected {
+    background-color: rgba(0, 0, 0, 0.2);
+  }
+
+  aside > button > img {
     width: 100%;
     height: 100%;
+  }
+
+  aside > button > .color {
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+  }
+
+  aside > div.divider {
+    width: 100%;
+    height: 2px;
+    background-color: rgba(0, 0, 0, 0.5);
   }
 </style>
