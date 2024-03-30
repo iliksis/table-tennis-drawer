@@ -2,13 +2,13 @@
   import { createEventDispatcher } from "svelte";
   const dispatch = createEventDispatcher();
 
+  import { draggable } from "@neodrag/svelte";
+
   import expand from "../assets/fullscreen-expand-svgrepo-com.svg";
   import shrink from "../assets/fullscreen-shrink-svgrepo-com.svg";
   import reset from "../assets/reset-svgrepo-com.svg";
 
   export let resetCanvas = undefined;
-
-  let hidden = false;
 
   let fullscreen = false;
 
@@ -31,7 +31,11 @@
   };
 </script>
 
-<aside>
+<aside use:draggable={{ handle: ".handle" }}>
+  <div class="handle"></div>
+
+  <div class={"divider"} />
+
   <button on:click={onFullscreenChange}>
     {#if fullscreen}
       <img src={shrink} alt="Exit fullscreen view" />
@@ -58,6 +62,22 @@
 </aside>
 
 <style>
+  div.handle {
+    width: 16px;
+    height: 8px;
+    cursor: grab;
+    margin: 10px 0;
+
+    background-image: radial-gradient(black 40%, transparent 40%);
+    background-size: 4px 4px;
+    background-position: 0 100%;
+    background-repeat: repeat;
+  }
+
+  div.handle:active {
+    cursor: grabbing;
+  }
+
   /* Drawer Menu */
   aside {
     display: flex;
