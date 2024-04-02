@@ -10,6 +10,7 @@
 
   export let resetCanvas = undefined;
 
+  let hidden = false;
   let fullscreen = false;
 
   const onFullscreenChange = () => {
@@ -36,7 +37,7 @@
 
   <div class={"divider"} />
 
-  <button on:click={onFullscreenChange}>
+  <button class:hidden on:click={onFullscreenChange}>
     {#if fullscreen}
       <img src={shrink} alt="Exit fullscreen view" />
     {:else}
@@ -44,21 +45,32 @@
     {/if}
   </button>
 
-  <button on:click={resetCanvas}>
+  <button class:hidden on:click={resetCanvas}>
     <img src={reset} alt="Reset canvas" />
   </button>
 
-  <div class={"divider"} />
+  <div class={"divider"} class:hidden />
 
   {#each colors as color, index}
     <button
       class:selected={selectedColorIndex === index}
+      class:hidden
       disabled={selectedColorIndex === index}
       on:click={() => _onChangeColor(color, index)}
     >
       <div class:color style="background-color: {color}" />
     </button>
   {/each}
+
+  <div class={"divider"} class:hidden />
+
+  <button
+    class={"arrow"}
+    class:hidden
+    on:click={() => {
+      hidden = !hidden;
+    }}
+  ></button>
 </aside>
 
 <style>
@@ -112,6 +124,10 @@
     background-color: rgba(0, 0, 0, 0.2);
   }
 
+  aside > .hidden {
+    display: none;
+  }
+
   aside > button > img {
     width: 100%;
     height: 100%;
@@ -127,5 +143,23 @@
     width: 100%;
     height: 2px;
     background-color: rgba(0, 0, 0, 0.5);
+  }
+
+  aside > button.arrow {
+    box-sizing: border-box;
+    width: 0;
+    height: 0;
+    padding: 0;
+    margin: 9px;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid rgba(0, 0, 0, 0.5);
+  }
+
+  aside > button.arrow.hidden {
+    display: inline-block;
+    margin: 9px 0 0 0;
+    border-bottom: 10px solid transparent;
+    border-top: 10px solid rgba(0, 0, 0, 0.5);
   }
 </style>
